@@ -1,9 +1,10 @@
 var Adventures = {};
 //currentAdventure is used for the adventure we're currently on (id). This should be determined at the beginning of the program
-Adventures.currentAdventure = 0; //todo keep track from db
+Adventures.currentAdventure = 0;
 //currentStep is used for the step we're currently on (id). This should be determined at every crossroad, depending on what the user chose
 Adventures.currentStep = 0;//todo keep track from db
-Adventures.currentUser = 0;//todo keep track from db
+Adventures.currentUser = 0;
+Adventures.currentQuestion=0;
 
 
 //TODO: remove for production
@@ -33,13 +34,16 @@ Adventures.chooseOption = function(){
         type: "POST",
         data: {"user": Adventures.currentUser,
             "adventure": Adventures.currentAdventure,
-            "next": Adventures.currentStep},
+            "next": Adventures.currentStep,
+        "question_id":Adventures.currentQuestion},
         dataType: "json",
         contentType: "application/json",
         success: function (data) {
             console.log(data);
             $(".greeting-text").hide();
             Adventures.write(data);
+            Adventures.currentQuestion=data["question"];
+            console.log(Adventures.currentQuestion)
         }
     });
 };
@@ -85,8 +89,7 @@ Adventures.initAdventure = function(){
 
     $.ajax("/start",{
         type: "POST",
-        data: {"user":
-            $("#nameField").val(),
+        data: {"user":$("#nameField").val(),
             "adventure_id": $(this).val()
         },
         dataType: "json",
@@ -96,6 +99,10 @@ Adventures.initAdventure = function(){
             Adventures.write(data);
             $(".adventure").show();
             $(".welcome-screen").hide();
+            Adventures.currentUser=data.user;
+            Adventures.currentAdventure=data.adventure;
+            Adventures.currentQuestion=data["question"];
+            console.log(Adventures.currentQuestion)
         }
     });
 };
