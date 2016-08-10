@@ -16,10 +16,10 @@ def start():
     print(username)
     current_story_id = 0
     next_steps_results = [
-        {"id": 1, "option_text": "I fight it"},
-        {"id": 2, "option_text": "I give him 10 coins"},
-        {"id": 3, "option_text": "I tell it that I just want to go home"},
-        {"id": 4, "option_text": "I run away quickly"}
+        {"option_id": 1, "option_text": "I fight it"},
+        {"option_id": 2, "option_text": "I give him 10 coins"},
+        {"option_id": 3, "option_text": "I tell it that I just want to go home"},
+        {"option_id": 4, "option_text": "I run away quickly"}
     ]
 
     connection = pymysql.connect(host="localhost",
@@ -41,16 +41,20 @@ def start():
             print("in")
             user_id = result["user_id"]
             print(user_id)
+
             sql2 = "SELECT current_question FROM users WHERE user_id='{}'".format(user_id)
             cursor.execute(sql2)
             result2 = cursor.fetchone()
             question_id=result2["current_question"]
+            print("the current question of the user is")
+            print(question_id)
 
             sql3 = "SELECT question_text from questions where question_id='{}'".format(question_id)
             cursor.execute(sql3)
             result3 = cursor.fetchone()
             print(result3["question_text"])
             text = result3["question_text"]
+
 
             sql4 = "SELECT option_id,option_text from options where question_id='{}'".format(question_id)
             cursor.execute(sql4)
@@ -125,22 +129,43 @@ def story():
         print(result2["question_text"])
         text=result2["question_text"]
 
-        sql3="SELECT * from options where question_id='{}'".format(result["next_question_id"])
+        sql3="SELECT option_id,option_text from options where question_id='{}'".format(result["next_question_id"])
         cursor.execute(sql3)
         result3 = cursor.fetchall()
         print(result3)
+        # print(result3["gold_change"])
+        # print(result3["life_change"])
+        # coins=result3["gold_change"]
+        # life=result3["life_change"]
+
         print("the new question will be'{}'".format(nq))
+
+        # sql6="SELECT * from users where user_id='{}'".format(user_id)
+        # cursor.execute(sql6)
+        # result6 = cursor.fetchone()
+        # print(result6["gold_state"])
+        # print(result6["gold_state"])
+
+        # ucoins=result6["gold_state"]
+        # ulife=result6["life_state"]
+
+        # new_coins=ucoins-coins
+        # new_life=ulife-life
 
         sql4="UPDATE users SET current_question='{}' WHERE user_id='{}'".format(nq,user_id)
         cursor.execute(sql4)
         connection.commit()
+
+        # sql5="UPDATE users SET gold_state='{}',life_state='{}'".format()
 
         return json.dumps({"user": user_id,
                        "adventure": current_adv_id,
                        "question":nq,
                        "text": text,
                        "image": "choice.jpg",
-                       "options": result3
+                       "options": result3,
+                        # "coins":coins,
+                        # "life":life
                        })
 
 @route('/js/<filename:re:.*\.js$>', method='GET')
