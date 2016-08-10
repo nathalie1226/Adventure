@@ -64,13 +64,7 @@ def start():
             next_steps_results=result4
             print(type(question_id))
 
-            # sql = "SELECT next_question_id from options WHERE question_id='{}' and option_id='{}'".format(question_id,
-            #                                                                                               next_story_id)
-            # cursor.execute(sql)
-            # result = cursor.fetchone()
-            # print(result["next_question_id"])
-            # nq = result["next_question_id"]
-            # print("the new question will be'{}'".format(nq))
+
 
             return json.dumps({"user": user_id,
                                "adventure": current_adv_id,

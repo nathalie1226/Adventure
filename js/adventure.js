@@ -38,7 +38,9 @@ Adventures.chooseOption = function () {
             "user": Adventures.currentUser,
             "adventure": Adventures.currentAdventure,
             "next": Adventures.currentStep,
-            "question_id": Adventures.currentQuestion
+            "question_id": Adventures.currentQuestion,
+            "coins":Adventures.coinStatus,
+            "life":Adventures.lifeStatus
         },
         dataType: "json",
         contentType: "application/json",
@@ -48,6 +50,7 @@ Adventures.chooseOption = function () {
             Adventures.write(data);
             Adventures.currentQuestion = data["question"];
             console.log(Adventures.currentQuestion)
+             // Adventures.updateCoinsAndLifes(data.coin,data.life);
         }
     });
 };
@@ -77,6 +80,15 @@ Adventures.start = function () {
     });
 };
 
+Adventures.restart=function(){
+    window.reload();
+};
+
+Adventures.updateCoinsAndLifes=function(coin,life){
+    Adventures.coinStatus=Adventures.coinStatus-coin;
+    Adventures.lifeStatus=Adventures.lifeStatus-life;
+    
+};
 //Setting the relevant image according to the server response
 Adventures.setImage = function (img_name) {
     $("#situation-image").attr("src", "./images/" + img_name);
@@ -98,7 +110,9 @@ Adventures.initAdventure = function () {
         type: "POST",
         data: {
             "user": $("#nameField").val(),
-            "adventure_id": $(this).val()
+            "adventure_id": $(this).val(),
+            "coins":Adventures.coinStatus,
+            "life":Adventures.lifeStatus
         },
         dataType: "json",
         contentType: "application/json",
@@ -111,8 +125,7 @@ Adventures.initAdventure = function () {
             Adventures.currentAdventure = data.adventure;
             Adventures.currentQuestion = data["question"];
             console.log(Adventures.currentQuestion);
-            // Adventures.coinStatus = data.coin;
-            // Adventures.lifeStatus = data.life;
+            // Adventures.updateCoinsAndLifes(data.coin,data.life);
         }
     });
 };
