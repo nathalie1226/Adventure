@@ -8,6 +8,7 @@ Adventures.currentQuestion = 0;
 Adventures.coinStatus = 10;
 Adventures.lifeStatus = 100;
 Adventures.username="";
+Adventures.winOrLOOSE=False;
 
 
 //TODO: remove for production
@@ -43,6 +44,7 @@ Adventures.chooseOption = function () {
             "coins":Adventures.coinStatus,
             "life":Adventures.lifeStatus,
             "username":Adventures.username
+            
         },
         dataType: "json",
         contentType: "application/json",
@@ -58,7 +60,10 @@ Adventures.chooseOption = function () {
             console.log(Adventures.lifeStatus);
             $("#coins").text(Adventures.coinStatus);
             $('#life').text(Adventures.lifeStatus);
-
+            Adventures.winOrLOOSE=data.loose;
+            console.log(Adventures.winOrLOOSE)
+            Adventures.restart();
+            
         }
     });
 };
@@ -89,7 +94,9 @@ Adventures.start = function () {
 };
 
 Adventures.restart=function(){
-    window.reload();
+    if (Adventures.winOrLOOSE) {
+        window.reload();
+    }
 };
 
 Adventures.updateCoinsAndLifes=function(coin,life){

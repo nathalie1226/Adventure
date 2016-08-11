@@ -22,12 +22,7 @@ def start():
         {"option_id": 4, "option_text": "I run away quickly"}
     ]
 
-    # connection = pymysql.connect(host="localhost",
-    #                              user="root",
-    #                              password="",
-    #                              db="adventure",
-    #                              charset="utf8",
-    #                              cursorclass=pymysql.cursors.DictCursor)
+
 
     connection = pymysql.connect(host="us-cdbr-iron-east-04.cleardb.net",
                                  user="b4524ee2815b1d",
@@ -104,13 +99,9 @@ def story():
     question_id = request.POST.get("question_id")
     print("the current question is'{}'".format(question_id))
     print(next_story_id)
+    end_game=False
 
-    # connection = pymysql.connect(host="localhost",
-    #                              user="root",
-    #                              password="",
-    #                              db="adventure",
-    #                              charset="utf8",
-    #                              cursorclass=pymysql.cursors.DictCursor)
+
 
 
     connection = pymysql.connect(host="us-cdbr-iron-east-04.cleardb.net",
@@ -177,7 +168,12 @@ def story():
         cursor.execute(sql4)
         connection.commit()
 
-        # sql5="UPDATE users SET gold_state='{}',life_state='{}'".format()
+        if result["next_question_id"]==9 or result["next_question_id"]==10:
+            end_game=True
+            sql7 = "UPDATE users SET current_question='{}',gold_state='{}',life_state='{}' WHERE user_id='{}'".format(1,10,100)
+            cursor.execute(sql7)
+            connection.commit()
+
 
         return json.dumps({"user": user_id,
                            "adventure": current_adv_id,
@@ -186,7 +182,8 @@ def story():
                            "image": "choice.jpg",
                            "options": result3,
                            "coins": new_coins,
-                           "life": new_life
+                           "life": new_life,
+                           "loose":end_game
                            })
 
 
