@@ -24,10 +24,17 @@ def start():
 
 
 
-    connection = pymysql.connect(host="us-cdbr-iron-east-04.cleardb.net",
-                                 user="b4524ee2815b1d",
-                                 password="2457d197",
-                                 db="heroku_6b16247311a9cd6",
+    # connection = pymysql.connect(host="us-cdbr-iron-east-04.cleardb.net",
+    #                              user="b4524ee2815b1d",
+    #                              password="2457d197",
+    #                              db="heroku_6b16247311a9cd6",
+    #                              charset="utf8",
+    #                              cursorclass=pymysql.cursors.DictCursor)
+
+    connection = pymysql.connect(host="localhost",
+                                 user="root",
+                                 password="",
+                                 db="adventure",
                                  charset="utf8",
                                  cursorclass=pymysql.cursors.DictCursor)
 
@@ -103,13 +110,21 @@ def story():
 
 
 
+    #
+    # connection = pymysql.connect(host="us-cdbr-iron-east-04.cleardb.net",
+    #                              user="b4524ee2815b1d",
+    #                              password="2457d197",
+    #                              db="heroku_6b16247311a9cd6",
+    #                              charset="utf8",
+    #                              cursorclass=pymysql.cursors.DictCursor)
 
-    connection = pymysql.connect(host="us-cdbr-iron-east-04.cleardb.net",
-                                 user="b4524ee2815b1d",
-                                 password="2457d197",
-                                 db="heroku_6b16247311a9cd6",
+    connection = pymysql.connect(host="localhost",
+                                 user="root",
+                                 password="",
+                                 db="adventure",
                                  charset="utf8",
                                  cursorclass=pymysql.cursors.DictCursor)
+
     with connection.cursor() as cursor:
         if user_id == "null":
             sql7 = "SELECT user_id from users WHERE username='{}'".format(username)
@@ -167,12 +182,16 @@ def story():
                                                                                                                   user_id)
         cursor.execute(sql4)
         connection.commit()
+        print(question_id)
 
-        if result["next_question_id"]==9 or result["next_question_id"]==10:
+        if question_id==9 or question_id==10:
             end_game=True
-            sql7 = "UPDATE users SET current_question='{}',gold_state='{}',life_state='{}' WHERE user_id='{}'".format(1,10,100)
+            print(end_game)
+            print("in")
+            sql7 = "UPDATE users SET current_question='{}',gold_state='{}',life_state='{}' WHERE user_id='{}'".format(1,10,100,user_id)
             cursor.execute(sql7)
             connection.commit()
+
 
 
         return json.dumps({"user": user_id,
@@ -203,9 +222,8 @@ def images(filename):
 
 
 def main():
-    run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
-
-
+    # run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+    run(host="localhost",port="9000")
 
 if __name__ == '__main__':
     main()

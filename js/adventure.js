@@ -8,7 +8,7 @@ Adventures.currentQuestion = 0;
 Adventures.coinStatus = 10;
 Adventures.lifeStatus = 100;
 Adventures.username="";
-Adventures.winOrLOOSE=False;
+Adventures.winOrLOOSE=false;
 
 
 //TODO: remove for production
@@ -61,7 +61,7 @@ Adventures.chooseOption = function () {
             $("#coins").text(Adventures.coinStatus);
             $('#life').text(Adventures.lifeStatus);
             Adventures.winOrLOOSE=data.loose;
-            console.log(Adventures.winOrLOOSE)
+            console.log(Adventures.winOrLOOSE);
             Adventures.restart();
             
         }
