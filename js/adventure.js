@@ -7,6 +7,7 @@ Adventures.currentUser = 0;
 Adventures.currentQuestion = 0;
 Adventures.coinStatus = 10;
 Adventures.lifeStatus = 100;
+Adventures.username="";
 
 
 //TODO: remove for production
@@ -40,7 +41,8 @@ Adventures.chooseOption = function () {
             "next": Adventures.currentStep,
             "question_id": Adventures.currentQuestion,
             "coins":Adventures.coinStatus,
-            "life":Adventures.lifeStatus
+            "life":Adventures.lifeStatus,
+            "username":Adventures.username
         },
         dataType: "json",
         contentType: "application/json",
@@ -49,8 +51,14 @@ Adventures.chooseOption = function () {
             $(".greeting-text").hide();
             Adventures.write(data);
             Adventures.currentQuestion = data["question"];
-            console.log(Adventures.currentQuestion)
-             // Adventures.updateCoinsAndLifes(data.coin,data.life);
+            console.log(Adventures.currentQuestion);
+            Adventures.coinStatus=data.coins;
+            console.log(Adventures.coinStatus);
+            Adventures.lifeStatus=data.life;
+            console.log(Adventures.lifeStatus);
+            $("#coins").text(Adventures.coinStatus);
+            $('#life').text(Adventures.lifeStatus);
+
         }
     });
 };
@@ -112,7 +120,8 @@ Adventures.initAdventure = function () {
             "user": $("#nameField").val(),
             "adventure_id": $(this).val(),
             "coins":Adventures.coinStatus,
-            "life":Adventures.lifeStatus
+            "life":Adventures.lifeStatus,
+
         },
         dataType: "json",
         contentType: "application/json",
@@ -124,6 +133,7 @@ Adventures.initAdventure = function () {
             Adventures.currentUser = data.user;
             Adventures.currentAdventure = data.adventure;
             Adventures.currentQuestion = data["question"];
+            Adventures.username=data.username;
             console.log(Adventures.currentQuestion);
             // Adventures.updateCoinsAndLifes(data.coin,data.life);
         }

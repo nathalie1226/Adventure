@@ -17,8 +17,8 @@ def start():
     current_story_id = 0
     next_steps_results = [
         {"option_id": 1, "option_text": "I fight it"},
-        {"option_id": 2, "option_text": "I give him 10 coins"},
-        {"option_id": 3, "option_text": "I tell it that I just want to go home"},
+        {"option_id": 2, "option_text":"I tell it that I just want to go home" },
+        {"option_id": 3, "option_text": "I give him 10 coins" },
         {"option_id": 4, "option_text": "I run away quickly"}
     ]
 
@@ -56,7 +56,7 @@ def start():
             text = result3["question_text"]
 
 
-            sql4 = "SELECT option_id,option_text from options where question_id='{}'".format(question_id)
+            sql4 = "SELECT option_id,option_text from options where question_id='{}' ORDER BY option_id ASC".format(question_id)
             cursor.execute(sql4)
             result4 = cursor.fetchall()
             print(result4)
@@ -72,7 +72,8 @@ def start():
                                "text":text,
                                "image": "troll.png",
                                "options": next_steps_results,
-                               "question":question_id
+                               "question":question_id,
+                               "username":username
                                })
         else:
             sql = "INSERT INTO users(`username`) VALUES (%s)"
@@ -85,7 +86,8 @@ def start():
                                "text": "You meet a mysterious creature in the woods, what do you do?",
                                "image": "troll.png",
                                "options": next_steps_results,
-                               "question":1
+                               "question":1,
+                               "username":username
                                })
 
 
@@ -97,10 +99,15 @@ def start():
 @route("/story", method="POST")
 def story():
     user_id = request.POST.get("user")
+    username= request.POST.get("username")
+
+
+
     current_adv_id = request.POST.get("adventure")
     next_story_id = request.POST.get("next")#this is what the user chose - use it!
     question_id=request.POST.get("question_id")
     print("the current question is'{}'".format(question_id))
+    print(next_story_id)
 
     connection = pymysql.connect(host="localhost",
                                  user="root",
@@ -111,6 +118,13 @@ def story():
 
 
     with connection.cursor() as cursor:
+        if user_id =="null" :
+            sql7 = "SELECT user_id from users WHERE username='{}'".format(username)
+            cursor.execute(sql7)
+            result7 = cursor.fetchone()
+            user_id=result7["user_id"]
+            print(result7)
+
         sql = "SELECT next_question_id from options WHERE question_id='{}' and option_id='{}'".format(question_id,next_story_id)
         cursor.execute(sql)
         result = cursor.fetchone()
@@ -126,27 +140,38 @@ def story():
         sql3="SELECT option_id,option_text from options where question_id='{}'".format(result["next_question_id"])
         cursor.execute(sql3)
         result3 = cursor.fetchall()
-        print(result3)
-        # print(result3["gold_change"])
-        # print(result3["life_change"])
-        # coins=result3["gold_change"]
-        # life=result3["life_change"]
 
-        print("the new question will be'{}'".format(nq))
 
-        # sql6="SELECT * from users where user_id='{}'".format(user_id)
-        # cursor.execute(sql6)
-        # result6 = cursor.fetchone()
-        # print(result6["gold_state"])
-        # print(result6["gold_state"])
 
-        # ucoins=result6["gold_state"]
-        # ulife=result6["life_state"]
 
-        # new_coins=ucoins-coins
-        # new_life=ulife-life
+        sql6="SELECT * from users where user_id='{}'".format(user_id)
+        cursor.execute(sql6)
+        result6 = cursor.fetchone()
+        print(result6)
+        print(result6["gold_state"])
+        print(result6["life_state"])
 
-        sql4="UPDATE users SET current_question='{}' WHERE user_id='{}'".format(nq,user_id)
+        ucoins=result6["gold_state"]
+        ulife=result6["life_state"]
+
+        print(ucoins)
+        print(ulife)
+
+
+
+        sql5="SELECT gold_change,life_change from options where question_id='{}' and option_id='{}'".format(question_id,next_story_id)
+        cursor.execute(sql5)
+        result5 = cursor.fetchone()
+        print(result5)
+        coins=result5["gold_change"]
+        life=result5["life_change"]
+
+        new_coins=ucoins-coins
+        new_life=ulife-life
+        print(new_coins)
+        print(new_life)
+
+        sql4="UPDATE users SET current_question='{}',gold_state='{}',life_state='{}' WHERE user_id='{}'".format(nq,new_coins,new_life,user_id)
         cursor.execute(sql4)
         connection.commit()
 
@@ -158,8 +183,8 @@ def story():
                        "text": text,
                        "image": "choice.jpg",
                        "options": result3,
-                        # "coins":coins,
-                        # "life":life
+                        "coins":new_coins,
+                        "life":new_life
                        })
 
 @route('/js/<filename:re:.*\.js$>', method='GET')
