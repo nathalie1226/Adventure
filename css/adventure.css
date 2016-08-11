@@ -1,6 +1,8 @@
 
 body{
-    background-image:url('../images/DD2.jpg');
+    background-image:url('../images/forest.jpg');
+    /*background-repeat:no-repeat;*/
+    /*background-position: cover;*/
     font-family: 'Roboto', sans-serif;
     overflow: hidden;
 }

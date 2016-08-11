@@ -41,26 +41,26 @@ def start():
     with connection.cursor() as cursor:
         sql = "SELECT * FROM users WHERE username='{}'".format(username)
         cursor.execute(sql)
-        result = cursor.fetchone()
-        print(result)
+        user_info = cursor.fetchone()
+        print(user_info)
 
-        if result:
+        if user_info:
             print("in")
-            user_id = result["user_id"]
+            user_id = user_info["user_id"]
             print(user_id)
 
             sql2 = "SELECT current_question FROM users WHERE user_id='{}'".format(user_id)
             cursor.execute(sql2)
-            result2 = cursor.fetchone()
-            question_id = result2["current_question"]
+            cq = cursor.fetchone()
+            question_id = cq["current_question"]
             print("the current question of the user is")
             print(question_id)
 
             sql3 = "SELECT question_text from questions where question_id='{}'".format(question_id)
             cursor.execute(sql3)
             result3 = cursor.fetchone()
-            print(result3["question_text"])
             text = result3["question_text"]
+            print(text)
 
             sql4 = "SELECT option_id,option_text from options where question_id='{}' ORDER BY option_id ASC".format(
                 question_id)
@@ -182,9 +182,9 @@ def story():
                                                                                                                   user_id)
         cursor.execute(sql4)
         connection.commit()
-        print(question_id)
 
-        if question_id==9 or question_id==10:
+
+        if int(question_id)==9 or int(question_id)==10:
             end_game=True
             print(end_game)
             print("in")

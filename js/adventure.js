@@ -95,7 +95,8 @@ Adventures.start = function () {
 
 Adventures.restart=function(){
     if (Adventures.winOrLOOSE) {
-        window.reload();
+        alert("going toreload")
+        location.reload();
     }
 };
 
