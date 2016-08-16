@@ -222,8 +222,8 @@ def images(filename):
 
 
 def main():
-    # run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
-    run(host="localhost",port="9000")
+    run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+    #run(host="localhost",port="9000")
 
 if __name__ == '__main__':
     main()
