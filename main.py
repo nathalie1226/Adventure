@@ -24,19 +24,19 @@ def start():
 
 
 
-    connection = pymysql.connect(host="us-cdbr-iron-east-04.cleardb.net",
-                                 user="b69ece0fa2a81b",
-                                 password="58cea4d5",
-                                 db="heroku_d958e16ebe26a90",
-                                 charset="utf8",
-                                 cursorclass=pymysql.cursors.DictCursor)
-
-    # connection = pymysql.connect(host="localhost",
-    #                              user="root",
-    #                              password="",
-    #                              db="adventure",
+    # connection = pymysql.connect(host="us-cdbr-iron-east-04.cleardb.net",
+    #                              user="b69ece0fa2a81b",
+    #                              password="58cea4d5",
+    #                              db="heroku_d958e16ebe26a90",
     #                              charset="utf8",
     #                              cursorclass=pymysql.cursors.DictCursor)
+
+    connection = pymysql.connect(host="localhost",
+                                 user="root",
+                                 password="",
+                                 db="adventure",
+                                 charset="utf8",
+                                 cursorclass=pymysql.cursors.DictCursor)
 
     with connection.cursor() as cursor:
         sql = "SELECT * FROM users WHERE username='{}'".format(username)
@@ -108,20 +108,20 @@ def story():
     print(next_story_id)
     end_game=False
 
-    connection = pymysql.connect(host="us-cdbr-iron-east-04.cleardb.net",
-                                 user="b69ece0fa2a81b",
-                                 password="58cea4d5",
-                                 db="heroku_d958e16ebe26a90",
-                                 charset="utf8",
-                                 cursorclass=pymysql.cursors.DictCursor)
-
-
-    # connection = pymysql.connect(host="localhost",
-    #                              user="root",
-    #                              password="",
-    #                              db="adventure",
+    # connection = pymysql.connect(host="us-cdbr-iron-east-04.cleardb.net",
+    #                              user="b69ece0fa2a81b",
+    #                              password="58cea4d5",
+    #                              db="heroku_d958e16ebe26a90",
     #                              charset="utf8",
     #                              cursorclass=pymysql.cursors.DictCursor)
+
+
+    connection = pymysql.connect(host="localhost",
+                                 user="root",
+                                 password="",
+                                 db="adventure",
+                                 charset="utf8",
+                                 cursorclass=pymysql.cursors.DictCursor)
 
     with connection.cursor() as cursor:
         if user_id == "null":
