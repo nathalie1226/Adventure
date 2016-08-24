@@ -22,39 +22,25 @@ connection = pymysql.connect(host="localhost",
 @route("/", method="GET")
 def index():
     return template("adventure.html")
-#
-# def selectUserInfo(username):
-#     with connection.cursor() as cursor:
-#         sql = "SELECT * FROM users WHERE var1=%s"% (username)
-#         # sql = """SELECT ValA FROM %s WHERE Val2 = %s AND Val3 = %s""" % (Val1, Val2, Val3)
-#         cursor.execute(sql,username)
-#         user_info = cursor.fetchone()
-#         print(user_info)
-#         return user_info
 
-# def selectUserInfo(variable, instance):
-#     with connection.cursor() as cursor:
-#         sql = "SELECT * FROM users WHERE '{0}'='{1}'".format(variable, instance)
-#         cursor.execute(sql)
-#         user_info = cursor.fetchone()
-#         print(user_info)
-#         return user_info
 
-def selectAllUserInfoFromName(username):
+def selectAllUserInfo(variable,username):
     with connection.cursor() as cursor:
-        sql = "SELECT * from users where username='{}'".format(username)
+        sql = "SELECT * from users where '{0}'='{1}'".format(variable,username)
         cursor.execute(sql)
         user_info = cursor.fetchone()
         print(user_info)
         return user_info
 
-def selectAllUserInfoFromID(user_id):
-    with connection.cursor() as cursor:
-        sql = "SELECT * from users where user_id='{}'".format(user_id)
-        cursor.execute(sql)
-        user_info = cursor.fetchone()
-        print(user_info)
-        return user_info
+# def selectInfoFromTable(info,table,user_id):
+#     with connection.cursor() as cursor:
+#         sql2 = "SELECT '{0}' FROM '{1}' WHERE user_id='{2}'".format(info,table,user_id)
+#         cursor.execute(sql2)
+#         cq = cursor.fetchone()
+#         question_id = cq["current_question"]
+#         print("the current question of the user is")
+#         print(question_id)
+#         return question_id
 
 def selectCurrentQuestion(user_id):
     with connection.cursor() as cursor:
@@ -117,33 +103,43 @@ def updateUserInfo(nq,new_coins,new_life,user_id):
         cursor.execute(sql4)
         connection.commit()
 
+def insertUserName(username):
+    with connection.cursor() as cursor:
+        sql = "INSERT INTO users(`username`) VALUES (%s)"
+        cursor.execute(sql, username)
+        connection.commit()
+
+# def winOrLoose(user_id):
+#     with connection.cursor() as cursor:
+#         end_game = True
+#         print(end_game)
+#         print("in")
+#         sql = "UPDATE users SET current_question='{}',gold_state='{}',life_state='{}' WHERE user_id='{}'".format(1, 10,
+#                                                                                                                   100,
+#                                                                                                                   user_id)
+#         cursor.execute(sql)
+#         connection.commit()
+
 @route("/start", method="POST")
 def start():
     username = request.POST.get("user")
     current_adv_id = request.POST.get("adventure")
     print(username)
     current_story_id = 0
+    user_info=selectAllUserInfo(username,username)
+    print(user_info)
 
-
-
-    with connection.cursor() as cursor:
-
-        # user_info=selectUserInfo("username",username)
-        user_info=selectAllUserInfoFromName(username)
+    if user_info:
+        print("in")
         print(user_info)
+        user_id = user_info["user_id"]
+        print(user_id)
+        question_id=selectCurrentQuestion(user_id)
+        text=selectQuestionText(question_id)
+        next_steps_results = selectQuestionOptions(question_id)
+        print(type(question_id))
 
-        if user_info:
-            print("in")
-            print(user_info)
-            user_id = user_info["user_id"]
-            print(user_id)
-
-            question_id=selectCurrentQuestion(user_id)
-            text=selectQuestionText(question_id)
-            next_steps_results = selectQuestionOptions(question_id)
-            print(type(question_id))
-
-            return json.dumps({"user": user_id,
+        return json.dumps({"user": user_id,
                                "adventure": current_adv_id,
                                "current": current_story_id,
                                "text": text,
@@ -152,17 +148,13 @@ def start():
                                "question": question_id,
                                "username": username
                                })
-        else:
-            sql = "INSERT INTO users(`username`) VALUES (%s)"
-            cursor.execute(sql, username)
-            connection.commit()
-            user_id = "null"
+    else:
+        insertUserName(username)
+        user_id = "null"
+        text=selectQuestionText(1)
+        options=selectQuestionOptions(1)
 
-
-            text=selectQuestionText(1)
-            options=selectQuestionOptions(1)
-
-            return json.dumps({"user": user_id,
+        return json.dumps({"user": user_id,
                                "adventure": current_adv_id,
                                "current": current_story_id,
                                "text": text,
@@ -186,12 +178,12 @@ def story():
 
     with connection.cursor() as cursor:
         if user_id == "null":
-            user_id=selectAllUserInfoFromName(username)["user_id"]
+            user_id=selectAllUserInfo(username)["user_id"]
 
         nq=selectNextQuestionId(question_id,next_story_id)
         text=selectQuestionText(nq)
         options=selectQuestionOptions(nq)
-        user_info=selectAllUserInfoFromID(user_id)
+        user_info=selectAllUserInfo(user_id,user_id)
         ucoins = user_info["gold_state"]
         ulife = user_info["life_state"]
 
@@ -210,6 +202,7 @@ def story():
 
 
         if int(question_id)==9 or int(question_id)==10:
+            # winOrLoose(user_id)
             end_game=True
             print(end_game)
             print("in")
