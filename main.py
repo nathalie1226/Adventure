@@ -32,9 +32,17 @@ def index():
 #         print(user_info)
 #         return user_info
 
-def selectAllUserInfoFromName(variable, instance):
+# def selectUserInfo(variable, instance):
+#     with connection.cursor() as cursor:
+#         sql = "SELECT * FROM users WHERE '{0}'='{1}'".format(variable, instance)
+#         cursor.execute(sql)
+#         user_info = cursor.fetchone()
+#         print(user_info)
+#         return user_info
+
+def selectAllUserInfoFromName(username):
     with connection.cursor() as cursor:
-        sql = "SELECT * FROM users WHERE '{0}'='{1}'".format(variable, instance)
+        sql = "SELECT * from users where username='{}'".format(username)
         cursor.execute(sql)
         user_info = cursor.fetchone()
         print(user_info)
@@ -47,15 +55,6 @@ def selectAllUserInfoFromID(user_id):
         user_info = cursor.fetchone()
         print(user_info)
         return user_info
-
-def selectUserIdFromName(username):
-    with connection.cursor() as cursor:
-        sql7 = "SELECT user_id from users WHERE username='{}'".format(username)
-        cursor.execute(sql7)
-        result7 = cursor.fetchone()
-        user_id = result7["user_id"]
-        print(result7)
-        return user_id
 
 def selectCurrentQuestion(user_id):
     with connection.cursor() as cursor:
@@ -129,10 +128,13 @@ def start():
 
     with connection.cursor() as cursor:
 
-        user_info=selectAllUserInfoFromName("username",username)
+        # user_info=selectUserInfo("username",username)
+        user_info=selectAllUserInfoFromName(username)
+        print(user_info)
 
         if user_info:
             print("in")
+            print(user_info)
             user_id = user_info["user_id"]
             print(user_id)
 
@@ -184,7 +186,7 @@ def story():
 
     with connection.cursor() as cursor:
         if user_id == "null":
-            user_id=selectUserIdFromName(username)
+            user_id=selectAllUserInfoFromName(username)["user_id"]
 
         nq=selectNextQuestionId(question_id,next_story_id)
         text=selectQuestionText(nq)
