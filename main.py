@@ -32,9 +32,9 @@ def index():
 #         print(user_info)
 #         return user_info
 
-def selectAllUserInfoFromName(username):
+def selectAllUserInfoFromName(variable, instance):
     with connection.cursor() as cursor:
-        sql = "SELECT * FROM users WHERE username='{}'".format(username)
+        sql = "SELECT * FROM users WHERE '{0}'='{1}'".format(variable, instance)
         cursor.execute(sql)
         user_info = cursor.fetchone()
         print(user_info)
@@ -129,7 +129,7 @@ def start():
 
     with connection.cursor() as cursor:
 
-        user_info=selectAllUserInfoFromName(username)
+        user_info=selectAllUserInfoFromName("username",username)
 
         if user_info:
             print("in")
