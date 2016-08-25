@@ -120,6 +120,7 @@ def start():
         print(user_id)
         question_id=selectInfoFromTable(["current_question"],"users","user_id",user_id)["current_question"]
         text=selectInfoFromTable(["question_text"],"questions","question_id",question_id)["question_text"]
+        image=selectInfoFromTable(["images"],"questions","question_id",question_id)["images"]
         next_steps_results = selectQuestionOptions(question_id)
         print(type(question_id))
 
@@ -127,7 +128,7 @@ def start():
                                "adventure": current_adv_id,
                                "current": current_story_id,
                                "text": text,
-                               "image": "troll.png",
+                               "image": image,
                                "options": next_steps_results,
                                "question": question_id,
                                "username": username
@@ -136,13 +137,14 @@ def start():
         insertUserName(username)
         user_id = "null"
         text=selectInfoFromTable(["question_text"],"questions","question_id",1)["question_text"]
+        image =  selectInfoFromTable(["images"], "questions", "question_id", 1)["images"]
         options=selectQuestionOptions(1)
 
         return json.dumps({"user": user_id,
                                "adventure": current_adv_id,
                                "current": current_story_id,
                                "text": text,
-                               "image": "troll.png",
+                               "image": image,
                                "options": options,
                                "question": 1,
                                "username": username
@@ -166,6 +168,7 @@ def story():
 
         nq=selectNextQuestionId(question_id,next_story_id)
         text = selectInfoFromTable(["question_text"],"questions","question_id",nq)["question_text"]
+        image =  selectInfoFromTable(["images"], "questions", "question_id", question_id)["images"]
         options = selectQuestionOptions(nq)
         user_info=selectAllUserInfo(user_id,user_id)
         ucoins = user_info["gold_state"]
@@ -187,12 +190,13 @@ def story():
 
         if int(question_id)==9 or int(question_id)==10:
             end_game=winOrLoose(user_id)
+            image = selectInfoFromTable(["images"], "questions", "question_id", question_id)["images"]
 
         return json.dumps({"user": user_id,
                            "adventure": current_adv_id,
                            "question": nq,
                            "text": text,
-                           "image": "choice.jpg",
+                           "image": image,
                            "options": options,
                            "coins": new_coins,
                            "life": new_life,
