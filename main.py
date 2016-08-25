@@ -32,35 +32,25 @@ def selectAllUserInfo(variable,username):
         print(user_info)
         return user_info
 
-# def selectInfoFromTable(info,table,user_id):
-#     with connection.cursor() as cursor:
-#         sql2 = "SELECT '{0}' FROM '{1}' WHERE user_id='{2}'".format(info,table,user_id)
-#         cursor.execute(sql2)
-#         cq = cursor.fetchone()
-#         question_id = cq["current_question"]
-#         print("the current question of the user is")
-#         print(question_id)
-#         return question_id
-
-def selectCurrentQuestion(user_id):
+def selectGoldLifeChanges(question_id,next_story_id):
     with connection.cursor() as cursor:
-        sql2 = "SELECT current_question FROM users WHERE user_id='{}'".format(user_id)
-        cursor.execute(sql2)
+        sql5 = "SELECT gold_change,life_change from options where question_id='{}' and option_id='{}'".format(
+            question_id, next_story_id)
+        cursor.execute(sql5)
+        result5 = cursor.fetchone()
+        print(result5)
+        return result5
+
+def selectInfoFromTable(info,table,colomn,value):
+    with connection.cursor() as cursor:
+        infostr=""
+        for i in info:
+            infostr=infostr+i+","
+        infostr=infostr[:-1]
+        sql = "SELECT {0} FROM {1} WHERE {2}='{3}'".format(infostr,table,colomn,value)
+        cursor.execute(sql)
         cq = cursor.fetchone()
-        question_id = cq["current_question"]
-        print("the current question of the user is")
-        print(question_id)
-        return question_id
-
-def selectQuestionText(question_id):
-    with connection.cursor() as cursor:
-        sql3 = "SELECT question_text from questions where question_id='{}'".format(question_id)
-        cursor.execute(sql3)
-        result3 = cursor.fetchone()
-        text = result3["question_text"]
-        print(text)
-        return text
-
+        return cq
 
 
 def selectQuestionOptions(question_id):
@@ -83,14 +73,7 @@ def selectNextQuestionId(question_id,next_story_id):
         nq = result["next_question_id"]
         return nq
 
-def selectGoldLifeChanges(question_id,next_story_id):
-    with connection.cursor() as cursor:
-        sql5 = "SELECT gold_change,life_change from options where question_id='{}' and option_id='{}'".format(
-            question_id, next_story_id)
-        cursor.execute(sql5)
-        result5 = cursor.fetchone()
-        print(result5)
-        return result5
+
 
 def updateUserInfo(nq,new_coins,new_life,user_id):
     with connection.cursor() as cursor:
@@ -109,16 +92,17 @@ def insertUserName(username):
         cursor.execute(sql, username)
         connection.commit()
 
-# def winOrLoose(user_id):
-#     with connection.cursor() as cursor:
-#         end_game = True
-#         print(end_game)
-#         print("in")
-#         sql = "UPDATE users SET current_question='{}',gold_state='{}',life_state='{}' WHERE user_id='{}'".format(1, 10,
-#                                                                                                                   100,
-#                                                                                                                   user_id)
-#         cursor.execute(sql)
-#         connection.commit()
+def winOrLoose(user_id):
+    with connection.cursor() as cursor:
+        end_game = True
+        print(end_game)
+        print("in")
+        sql = "UPDATE users SET current_question='{}',gold_state='{}',life_state='{}' WHERE user_id='{}'".format(1, 10,
+                                                                                                                  100,
+                                                                                                                  user_id)
+        cursor.execute(sql)
+        connection.commit()
+        return True
 
 @route("/start", method="POST")
 def start():
@@ -134,8 +118,8 @@ def start():
         print(user_info)
         user_id = user_info["user_id"]
         print(user_id)
-        question_id=selectCurrentQuestion(user_id)
-        text=selectQuestionText(question_id)
+        question_id=selectInfoFromTable(["current_question"],"users","user_id",user_id)["current_question"]
+        text=selectInfoFromTable(["question_text"],"questions","question_id",question_id)["question_text"]
         next_steps_results = selectQuestionOptions(question_id)
         print(type(question_id))
 
@@ -151,7 +135,7 @@ def start():
     else:
         insertUserName(username)
         user_id = "null"
-        text=selectQuestionText(1)
+        text=selectInfoFromTable(["question_text"],"questions","question_id",1)["question_text"]
         options=selectQuestionOptions(1)
 
         return json.dumps({"user": user_id,
@@ -181,8 +165,8 @@ def story():
             user_id=selectAllUserInfo(username)["user_id"]
 
         nq=selectNextQuestionId(question_id,next_story_id)
-        text=selectQuestionText(nq)
-        options=selectQuestionOptions(nq)
+        text = selectInfoFromTable(["question_text"],"questions","question_id",nq)["question_text"]
+        options = selectQuestionOptions(nq)
         user_info=selectAllUserInfo(user_id,user_id)
         ucoins = user_info["gold_state"]
         ulife = user_info["life_state"]
@@ -202,16 +186,7 @@ def story():
 
 
         if int(question_id)==9 or int(question_id)==10:
-            # winOrLoose(user_id)
-            end_game=True
-            print(end_game)
-            print("in")
-            sql7 = "UPDATE users SET current_question='{}',gold_state='{}',life_state='{}' WHERE user_id='{}'".format(1,10,100,user_id)
-            cursor.execute(sql7)
-            connection.commit()
-
-
-
+            end_game=winOrLoose(user_id)
 
         return json.dumps({"user": user_id,
                            "adventure": current_adv_id,
